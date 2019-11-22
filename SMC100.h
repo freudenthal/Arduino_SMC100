@@ -74,7 +74,7 @@ class SMC100
 		};
 		struct CommandQueueEntry
 		{
-			CommandStruct* Command;
+			const CommandStruct* Command;
 			CommandGetSetType GetOrSet;
 			float Parameter;
 		};
@@ -115,7 +115,7 @@ class SMC100
 		void CommandQueueRetreat();
 		void CommandCurrentPut(CommandType Type, float Parameter, CommandGetSetType GetOrSet);
 		void CommandQueuePut(CommandType Type, float Parameter, CommandGetSetType GetOrSet);
-		void CommandQueuePut(CommandStruct* CommandPointer, float Parameter, CommandGetSetType GetOrSet);
+		void CommandQueuePut(const CommandStruct* CommandPointer, float Parameter, CommandGetSetType GetOrSet);
 		bool CommandQueuePullToCurrentCommand();
 		void SendGetLimitNegative();
 		void SendGetLimitPositive();
@@ -144,7 +144,7 @@ class SMC100
 		bool NeedToFireMoveComplete;
 		FinishedListener HomeCompleteCallback;
 		bool NeedToFireHomeComplete;
-		CommandStruct* CurrentCommand;
+		const CommandStruct* CurrentCommand;
 		CommandGetSetType CurrentCommandGetOrSet;
 		float CurrentCommandParameter;
 		uint8_t GPIOInput;

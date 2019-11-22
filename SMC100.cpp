@@ -630,16 +630,18 @@ void SMC100::SendPositionRequest()
 }
 void SMC100::CommandCurrentPut(CommandType Type, float Parameter, CommandGetSetType GetOrSet)
 {
-	CurrentCommand = const_cast<CommandStruct*>(&CommandLibrary[static_cast<uint8_t>(Type)]);
+	//CurrentCommand = const_cast<CommandStruct*>(&CommandLibrary[static_cast<uint8_t>(Type)]);
+	CurrentCommand = &CommandLibrary[static_cast<uint8_t>(Type)];
 	CurrentCommandParameter = Parameter;
 	CurrentCommandGetOrSet = GetOrSet;
 }
 void SMC100::CommandQueuePut(CommandType Type, float Parameter, CommandGetSetType GetOrSet)
 {
-	CommandStruct* CommandPointer = const_cast<CommandStruct*>(&CommandLibrary[static_cast<uint8_t>(Type)]);
+	//CommandStruct* CommandPointer = const_cast<CommandStruct*>(&CommandLibrary[static_cast<uint8_t>(Type)]);
+	const CommandStruct* CommandPointer = &CommandLibrary[static_cast<uint8_t>(Type)];
 	CommandQueuePut(CommandPointer, Parameter, GetOrSet);
 }
-void SMC100::CommandQueuePut(CommandStruct* CommandPointer, float Parameter, CommandGetSetType GetOrSet)
+void SMC100::CommandQueuePut(const CommandStruct* CommandPointer, float Parameter, CommandGetSetType GetOrSet)
 {
 	CommandQueue[CommandQueueHead].Command = CommandPointer;
 	CommandQueue[CommandQueueHead].Parameter = Parameter;
