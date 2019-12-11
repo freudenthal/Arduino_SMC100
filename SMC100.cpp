@@ -73,6 +73,7 @@ SMC100::SMC100(HardwareSerial *serial, uint8_t address)
 	AllCompleteCallback = NULL;
 	MoveCompleteCallback = NULL;
 	HomeCompleteCallback = NULL;
+	GPIOReturnCallback = NULL;
 	NeedToFireMoveComplete = false;
 	NeedToFireHomeComplete = false;
 	CurrentCommand = NULL;
@@ -218,6 +219,11 @@ void SMC100::SetHomeCompleteCallback(FinishedListener Callback)
 void SMC100::SetMoveCompleteCallback(FinishedListener Callback)
 {
 	MoveCompleteCallback = Callback;
+}
+
+void SMC100::SetGPIOReturnCallback(FinishedListener Callback)
+{
+	GPIOReturnCallback = Callback;
 }
 
 void SMC100::Check()
@@ -437,6 +443,10 @@ void SMC100::ParseReply()
 		{
 			GPIOInput = (uint8_t)atoi(ParameterAddress);
 			SendErrorCommandRequest();
+			if (GPIOReturnCallback != NULL)
+			{
+				GPIOReturnCallback();
+			}
 		}
 		else if (CurrentCommand->Command == CommandType::Analogue)
 		{

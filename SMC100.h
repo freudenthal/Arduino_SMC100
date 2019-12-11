@@ -101,6 +101,7 @@ class SMC100
 		void SetAllCompleteCallback(FinishedListener Callback);
 		void SetHomeCompleteCallback(FinishedListener Callback);
 		void SetMoveCompleteCallback(FinishedListener Callback);
+		void SetGPIOReturnCallback(FinishedListener Callback);
 		float GetPosition();
 	private:
 		void CheckCommandQueue();
@@ -143,6 +144,7 @@ class SMC100
 		FinishedListener MoveCompleteCallback;
 		bool NeedToFireMoveComplete;
 		FinishedListener HomeCompleteCallback;
+		FinishedListener GPIOReturnCallback;
 		bool NeedToFireHomeComplete;
 		const CommandStruct* CurrentCommand;
 		CommandGetSetType CurrentCommandGetOrSet;
