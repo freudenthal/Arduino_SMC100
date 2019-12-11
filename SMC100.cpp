@@ -89,11 +89,11 @@ SMC100::SMC100(HardwareSerial *serial, uint8_t address)
 
 void SMC100::Begin()
 {
-	Mode = ModeType::Idle;
 	CommandQueuePut(CommandType::ErrorHardware, 0.0, CommandGetSetType::None);
 	CommandQueuePut(CommandType::LimitPositive, 0.0, CommandGetSetType::Get);
 	CommandQueuePut(CommandType::LimitNegative, 0.0, CommandGetSetType::Get);
 	CommandQueuePut(CommandType::GPIOInput, 0.0, CommandGetSetType::None);
+	Mode = ModeType::Idle;
 }
 
 bool SMC100::IsHomed()
@@ -317,7 +317,7 @@ void SMC100::CheckForCommandReply()
 	if ( (micros() - TransmitTime) > CommandReplyTimeMax )
 	{
 		Mode = ModeType::Idle;
-		Serial.print("<SMC200>(Timeout detected.)");
+		Serial.print("<SMC200>(Time out detected.)\n");
 	}
 }
 
@@ -365,6 +365,7 @@ void SMC100::ParseReply()
 					HomeCompleteCallback();
 				}
 			}
+			Mode = ModeType::Idle;
 		}
 		else if (CurrentCommand->Command == CommandType::ErrorCommands)
 		{
@@ -494,21 +495,27 @@ bool SMC100::SendCurrentCommand()
 		Serial.print("<SMC100>(Empty command requested.)");
 		return false;
 	}
+	//Serial.print(Address);
+	//Serial.print(CurrentCommand->CommandChar[0]);
+	//Serial.print(CurrentCommand->CommandChar[1]);
 	SerialPort->print(Address);
 	SerialPort->write(CurrentCommand->CommandChar[0]);
 	SerialPort->write(CurrentCommand->CommandChar[1]);
 	if (CurrentCommandGetOrSet == CommandGetSetType::Get)
 	{
-		Serial.print(GetCharacter);
+		Serial.write(GetCharacter);
+		SerialPort->write(GetCharacter);
 	}
 	else if (CurrentCommandGetOrSet == CommandGetSetType::Set)
 	{
 		if (CurrentCommand->SendType == CommandParameterType::Int)
 		{
+			//Serial.print((int)(CurrentCommandParameter));
 			SerialPort->print((int)(CurrentCommandParameter));
 		}
 		else if (CurrentCommand->SendType == CommandParameterType::Float)
 		{
+			//Serial.print(CurrentCommandParameter,6);
 			SerialPort->print(CurrentCommandParameter,6);
 		}
 		else
@@ -524,6 +531,7 @@ bool SMC100::SendCurrentCommand()
 	{
 		Status = false;
 	}
+	//Serial.print(NewLineCharacter);
 	SerialPort->write(CarriageReturnCharacter);
 	SerialPort->write(NewLineCharacter);
 	ReplyBufferIndex = 0;
@@ -658,6 +666,9 @@ bool SMC100::CommandQueuePullToCurrentCommand()
 		CurrentCommandGetOrSet = CommandQueue[CommandQueueTail].GetOrSet;
 		CommandQueueRetreat();
 		Status = true;
+		//Serial.print("NP");
+		//Serial.print(CurrentCommandParameter);
+		//Serial.print("\n");
 	}
 	return Status;
 }
