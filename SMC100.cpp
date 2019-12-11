@@ -20,7 +20,7 @@ const SMC100::CommandStruct SMC100::CommandLibrary[] =
 	{CommandType::Analogue,"RA",CommandParameterType::None,CommandGetSetType::GetAlways},
 	{CommandType::GPIOInput,"RB",CommandParameterType::None,CommandGetSetType::GetAlways},
 	{CommandType::Reset,"RS",CommandParameterType::None,CommandGetSetType::None},
-	{CommandType::GPIOOutput,"SB",CommandParameterType::None,CommandGetSetType::GetSet},
+	{CommandType::GPIOOutput,"SB",CommandParameterType::Int,CommandGetSetType::GetSet},
 	{CommandType::LimitPositive,"SR",CommandParameterType::Float,CommandGetSetType::GetSet},
 	{CommandType::LimitNegative,"SL",CommandParameterType::Float,CommandGetSetType::GetSet},
 	{CommandType::PositionAsSet,"TH",CommandParameterType::None,CommandGetSetType::GetAlways},
@@ -197,6 +197,9 @@ void SMC100::SetGPIOOutput(uint8_t Pin, bool Output)
 		Pin = 3;
 	}
 	bitWrite(GPIOOutput, Pin, Output);
+	//Serial.print("<GPIO>(");
+	//Serial.print(GPIOOutput);
+	//Serial.print(")\n");
 	CommandQueuePut(CommandType::GPIOOutput, (float)GPIOOutput, CommandGetSetType::Set);
 }
 
@@ -513,7 +516,7 @@ bool SMC100::SendCurrentCommand()
 	SerialPort->write(CurrentCommand->CommandChar[1]);
 	if (CurrentCommandGetOrSet == CommandGetSetType::Get)
 	{
-		Serial.write(GetCharacter);
+		//Serial.write(GetCharacter);
 		SerialPort->write(GetCharacter);
 	}
 	else if (CurrentCommandGetOrSet == CommandGetSetType::Set)
